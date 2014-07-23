@@ -1,0 +1,44 @@
+#data-table{
+    width:100%;
+}
+
+.table_head {
+    width:16%;
+    display:inline-block;
+    font-size:20px;
+}
+
+.dc-table-group{
+    background-color: #dddddd;
+    width:100%;
+}
+
+tbody{
+    width:100%;
+    display:table;
+}
+
+.dc-table-row {
+    width:100%;
+}
+
+.dc-table-column{
+    width:16%;
+}
+
+
+.dc-chart g.row text {
+    font-weight: bold;
+    font-size: 16px;
+    text-shadow: 1px 0px #000000, 0px 1px #000000, -1px 0px #000000, 0px -1px #000000;
+}
+
+.dc-chart text.pie-slice {
+    font-weight: bold;
+    font-size: 16px;
+    text-shadow: 1px 0px #000000, 0px 1px #000000, -1px 0px #000000, 0px -1px #000000;
+}
+
+.smallchart{
+    min-height:140px;
+}

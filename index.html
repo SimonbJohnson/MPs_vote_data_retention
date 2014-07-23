@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>How MPs voted on the data retention and investigatory powers bill</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="css/dc.css"/>
+        <link rel="stylesheet" type="text/css" href="css/site.css"/>
+        <script type="text/javascript" src="js/jquery.js"></script>
+        <script type="text/javascript" src="data/data.js"></script>
+        <script type="text/javascript" src="js/d3.js"></script>
+        <script type="text/javascript" src="js/crossfilter.js"></script>
+        <script type="text/javascript" src="js/dc.js"></script>
+        <script type="text/javascript">
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-46399763-1']);
+            _gaq.push(['_trackPageview']);
+
+            (function() {
+                 var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                 ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                 var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+    </script>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <h1>How MPs voted on the data retention and investigatory powers bill</h1>
+				<p><a href="http://services.parliament.uk/bills/2014-15/dataretentionandinvestigatorypowers.html">What is the bill?</a> - Created by <a href="https://twitter.com/Simon_B_Johnson">Simon Johnson</a> - Source: <a href="http://blog.38degrees.org.uk/2014/07/16/mp-vote-privacy/">38 Degrees</a></p>
+                <div class="col-md-6">
+                    <h3>Political Party</h3>
+                    <div id="party_chart"></div>
+                </div>
+                <div class="col-md-6">
+                    <div class="row smallchart">
+                        <div class="col-sm-6">
+                            <h4>Clause 5</h4>
+                            <p>An amendment requesting that DRIP takes effect regardless of European Union treaties making the UK subject to European Union Law and courts.</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <div id="clause_5_chart"></div>
+                        </div>
+                    </div>
+                    <div class="row smallchart">
+                        <div class="col-sm-6">
+                            <h4>Clause 6</h4>
+                            <p>An amendment requesting the Bill only remained in force until the end of 2014, rather than the end of 2016.</p>                            
+                        </div>
+                        <div class="col-sm-6">
+                            <div id="clause_6_chart"></div>
+                        </div>
+                    </div>
+                    <div class="row smallchart">
+                        <div class="col-sm-6">
+                            <h4>Second Reading</h4>
+                            <p>Reading considering the Data Retention and Investigatory Powers Bill and agreeing a motion that the Bill be read a Second time.</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <div id="second_reading_chart"></div>
+                        </div>
+                    </div>
+                    <div class="row smallchart">
+                        <div class="col-sm-6">
+                            <h4>Third Reading</h4>
+                            <p>Reading considering the Data Retention and Investigatory Powers Bill, support for the Bill as it stood, enabling it to continue on its path to becoming law.</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <div id="third_reading_chart"></div>
+                        </div>
+                    </div>                    
+                </div>
+            </div>
+            <div class="row">
+                <h4>List of MPs matching the filters</h4>
+                <div id="count-info" class="col-md-12">
+                    <h3><span class="filter-count "></span> selected out of <span class="total-count "></span> records</h3>
+                </div>                
+                <div id="data-table">
+                    <div class="header">
+                        <div class="table_head">Name</div>
+                        <div class="table_head">Constituency</div>
+                        <div class="table_head">Clause 5</div>
+                        <div class="table_head">Clause 6</div>
+                        <div class="table_head">Second Reading</div>
+                        <div class="table_head">Third Reading</div>
+                    </div>
+                </div>
+            </div>            
+        </div>
+        <script>
+            var party_chart = dc.pieChart("#party_chart");
+            var clause_5_chart = dc.pieChart("#clause_5_chart");
+            var clause_6_chart = dc.pieChart("#clause_6_chart");
+            var second_reading_chart = dc.pieChart("#second_reading_chart");
+            var third_reading_chart = dc.pieChart("#third_reading_chart");
+            
+            var cf = crossfilter(data);
+            
+            cf.party = cf.dimension(function(d) { return d.Party; });
+            cf.clause_5 = cf.dimension(function(d) { return d.Clause_5; });
+            cf.clause_6 = cf.dimension(function(d) { return d.Clause_6; });
+            cf.second_reading = cf.dimension(function(d) { return d.Second_reading; });
+            cf.third_reading = cf.dimension(function(d) { return d.Third_reading; });
+            
+            var party = cf.party.group();
+            var clause_5 = cf.clause_5.group();
+            var clause_6 = cf.clause_6.group();
+            var second_reading = cf.second_reading.group();
+            var third_reading = cf.third_reading.group();
+            var all = cf.groupAll();
+            
+            party_chart.width(500).height(400)
+                .dimension(cf.party)
+                .group(party)
+                .colors(['#f2d303',
+                      '#303f9f',
+                      '#333333',
+                      '#33CC33',
+                      '#999999',
+                      '#E60000',
+                      '#009933',
+                      '#FFFF66'
+                ])
+                .colorDomain([0,8])
+                .colorAccessor(function(d, i){
+                    if(d.key==="Alliance"){return 0;};
+                    if(d.key==="Con"){return 1;};
+                    if(d.key==="DUP"){return 2;};
+                    if(d.key==="Green"){return 3;};
+                    if(d.key==="Ind"){return 4;};
+                    if(d.key==="Lab"){return 5;};
+                    if(d.key==="LDem"){return 0;};
+                    if(d.key==="PC"){return 3;};
+                    if(d.key==="Res"){return 3;};
+                    if(d.key==="Res"){return 4;};
+                    if(d.key==="SDLP"){return 6;};
+                    if(d.key==="SF"){return 6;};
+                    if(d.key==="SNP"){return 7;};               
+                });
+        
+            clause_5_chart.width(120).height(100)
+                .dimension(cf.clause_5)
+                .group(clause_5)
+                .innerRadius(30)
+                .colors(['#e84e40',
+                      '#2baf2b',
+                      '#78909c'])
+                .colorDomain([0,3])
+                .colorAccessor(function(d, i){
+                    if(d.key==="aye"){return 1;};
+                    if(d.key==="no"){return 0;};
+                    if(d.key==="absent"){return 2;};
+                });
+        
+            clause_6_chart.width(120).height(100)
+                .dimension(cf.clause_6)
+                .group(clause_6)
+                .innerRadius(30)
+                .colors(['#e84e40',
+                      '#2baf2b',
+                      '#78909c'])
+                .colorDomain([0,3])
+                .colorAccessor(function(d, i){
+                    if(d.key==="aye"){return 1;};
+                    if(d.key==="no"){return 0;};
+                    if(d.key==="absent"){return 2;};
+                });
+        
+            second_reading_chart.width(120).height(100)
+                .dimension(cf.second_reading)
+                .group(second_reading)
+                .innerRadius(30)                
+                .colors(['#e84e40',
+                      '#2baf2b',
+                      '#78909c'])
+                .colorDomain([0,3])
+                .colorAccessor(function(d, i){
+                    if(d.key==="aye"){return 1;};
+                    if(d.key==="no"){return 0;};
+                    if(d.key==="absent"){return 2;};
+                });
+        
+            third_reading_chart.width(120).height(100)
+                .dimension(cf.third_reading)
+                .group(third_reading)
+                .innerRadius(30)
+                .colors(['#e84e40',
+                      '#2baf2b',
+                      '#78909c'])
+                .colorDomain([0,3])
+                .colorAccessor(function(d, i){
+                    if(d.key==="aye"){return 1;};
+                    if(d.key==="no"){return 0;};
+                    if(d.key==="absent"){return 2;};
+                });
+                
+            dc.dataTable("#data-table")
+                .dimension(cf.party)                
+                .group(function (d) {
+                    return d.Party;
+                })
+                .size(650)
+                .columns([
+                    function(d){
+                       return d.Name; 
+                    },
+                    function(d){
+                       return d.Constituency; 
+                    },
+                    function(d){
+                       return d.Clause_5; 
+                    },
+                    function(d){
+                       return d.Clause_6; 
+                    },
+                    function(d){
+                       return d.Second_reading; 
+                    },
+                    function(d){
+                       return d.Third_reading; 
+                    }
+                ])
+                .renderlet(function (table) {
+                    table.selectAll(".dc-table-group").classed("info", true);
+                });
+                
+                dc.dataCount("#count-info")
+	            .dimension(cf)
+	            .group(all);                
+
+            dc.renderAll();
+        </script>
+            
+    </body>
+</html>
